@@ -199,6 +199,19 @@ function EventRow({ event }) {
   );
 }
 
+// ─── Responsive breakpoint hook ──────────────────────────────────────────────
+function useBreakpoint() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200
+  );
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return { isPhone: width < 600, isTablet: width >= 600 && width < 900, isDesktop: width >= 900 };
+}
+
 // ─── Main HMI Component ───────────────────────────────────────────────────────
 export default function HMIPanel() {
   const [circuit, setCircuit] = useState(INITIAL_CIRCUIT);
@@ -209,6 +222,8 @@ export default function HMIPanel() {
   const [faultType, setFaultType] = useState(FAULT_TYPES[0]);
   const eventsRef = useRef(events);
   eventsRef.current = events;
+
+  const { isPhone, isTablet, isDesktop } = useBreakpoint();
 
   function log(type, message) {
     const entry = { type, message, time: new Date().toLocaleTimeString() };
@@ -292,7 +307,8 @@ export default function HMIPanel() {
       background: "#060d18",
       color: "#fff",
       fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
-      padding: "24px 28px",
+      padding: isPhone ? "12px" : isTablet ? "16px 20px" : "24px 28px",
+      boxSizing: "border-box",
     }}>
       {/* CSS animations */}
       <style>{`
@@ -302,12 +318,12 @@ export default function HMIPanel() {
       `}</style>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
         <div>
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: 3, marginBottom: 4 }}>
             SBSC · ELECTRICAL CONTROL SYSTEM
           </div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: -0.5, color: "#e2e8f0" }}>
+          <h1 style={{ margin: 0, fontSize: isPhone ? 17 : 22, fontWeight: 700, letterSpacing: -0.5, color: "#e2e8f0" }}>
             HMI Distribution Panel
           </h1>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>
@@ -326,8 +342,8 @@ export default function HMIPanel() {
         <div className="fault-banner" style={{
           background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.4)",
           borderRadius: 8, padding: "8px 16px", marginBottom: 16,
-          fontSize: 12, color: "#ef4444", fontWeight: 700, letterSpacing: 1,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
+          fontSize: isPhone ? 10 : 12, color: "#ef4444", fontWeight: 700, letterSpacing: 1,
+          display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 4,
         }}>
           <span>⚠ FAULT DETECTED — CHECK EVENT LOG AND RESET AFFECTED BREAKERS</span>
           <span style={{ fontSize: 10, opacity: 0.7 }}>{new Date().toLocaleTimeString()}</span>
@@ -335,7 +351,7 @@ export default function HMIPanel() {
       )}
 
       {/* Main layout: diagram left, controls right */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "1fr 300px" : "1fr", gap: 12, marginBottom: 12 }}>
 
         {/* Single-line diagram */}
         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 20px" }}>
@@ -439,7 +455,7 @@ export default function HMIPanel() {
       </div>
 
       {/* Fault injection + Event log */}
-      <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "300px 1fr" : "1fr", gap: 12 }}>
 
         {/* Fault simulation panel */}
         <div style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 12, padding: "14px 16px" }}>
@@ -461,7 +477,7 @@ export default function HMIPanel() {
             <option value="">Select branch...</option>
             {circuit.branches.map(b => <option key={b.id} value={b.id}>{b.label}</option>)}
           </select>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 8, flexDirection: isPhone ? "column" : "row" }}>
             <button onClick={injectFault} disabled={!selectedBranch} style={{
               flex: 1, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.4)",
               color: "#ef4444", borderRadius: 6, padding: "8px", cursor: selectedBranch ? "pointer" : "not-allowed",
