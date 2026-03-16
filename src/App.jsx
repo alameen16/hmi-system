@@ -321,7 +321,7 @@ export default function HMIPanel() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
         <div>
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: 3, marginBottom: 4 }}>
-            SBSC · ELECTRICAL CONTROL SYSTEM
+            ELECTRICAL CONTROL SYSTEM
           </div>
           <h1 style={{ margin: 0, fontSize: isPhone ? 17 : 22, fontWeight: 700, letterSpacing: -0.5, color: "#e2e8f0" }}>
             HMI Distribution Panel
@@ -499,7 +499,7 @@ export default function HMIPanel() {
       </div>
 
       <div style={{ marginTop: 16, color: "rgba(255,255,255,0.15)", fontSize: 10, fontFamily: "monospace", textAlign: "center" }}>
-        Akintola Al-Ameen · Bells University of Technology · EEE Internship Project 2
+        Akintola Al-Ameen 
       </div>
     </div>
   );
